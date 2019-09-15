@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>UoE Timetable To Calendar</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="js/ics.deps.min.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/index.js"></script>
+</head>
+
+<body class="h-100">
+    <div class="row p-0 m-0 h-100">
+        <div class="col-lg-4 col-md-5 col-sm-6 h-100 overflow-auto bg-dark text-light">
+            <div class="h-100 p-0">
+                <div class="p-3 text-center">
+                    <h3>UoE Timetable To Calendar</h3>
+                    <textarea id="url" class="form-control" placeholder="Paste timetable URL" rows="7" style="font-size:13px;"></textarea>
+                    <div class="m-3">
+                        <button class="btn btn-outline-warning" onclick="javascript:fetchUrl();">Load my classes</button>
+                        <button id="donwloadBtn" class="btn btn-outline-warning" onclick="javascript:generateIcal();" disabled>Download!</button>
+                    </div>
+                    <hr class="bg-light">
+                    <h4>Instructions</h4>
+                    <ol class="text-justify small mp-0">
+                        <li>Go to the <a class="alert-link" href="https://browser.ted.is.ed.ac.uk/">timetable browser</a></li>
+                        <li>Select your courses and press <i>"View timetable"</i></li>
+                        <li>Copy the URL of the timetable page</li>
+                        <li>Paste it in the above box & click <i>"Load my classes"</i></li>
+                        <li>Select the classes you want</li>
+                        <li>Click <i>"Download"</i> and see specific instructions for
+                            <ul>
+                                <li><a href="https://support.google.com/calendar/answer/37118?hl=en">Google Calendar</a></li>
+                                <li><a href="https://support.apple.com/en-gb/guide/calendar/icl1023/mac">iCloud</a></li>
+                                <li><a href="https://support.office.com/en-us/article/import-or-subscribe-to-a-calendar-in-outlook-com-cff1429c-5af6-41ec-a5b4-74f2c278e98c">Outlook Calendar</a></li>
+                            </ul>
+                        </li>
+                        <li>OR add individual classes with <img class="dropdownIcon" alt="google calendar icon" data-toggle="tooltip" data-placement="top" title="Add a single event" src="icons/gcalendar.png">/<img class="dropdownIcon" alt="google calendar icon red" data-toggle="tooltip" data-placement="top" title="Add multiple events (you have to enable pop-ups for this website)" src="icons/gcalendar_red.png"> buttons (GCalendar only)</li>
+                    </ol>
+                    <hr class="bg-light">
+                    Feel free to 
+                    <a href="https://www.paypal.me/msramalho">buy me a cup of coffee ☕</a>
+                    <br> or 
+                    <a href="https://github.com/msramalho/uoe-timetable-to-calendar">peruse this site's code 💻</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8 col-md-7 col-sm-6 h-100 p-0">
+            <div class="h-100 my-0 p-0">
+                <div class="bg-light h-100 overflow-auto p-5">
+                    <div id="events">
+                        <h5 class="text-center my-5">Your classes will appear here 🎓</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

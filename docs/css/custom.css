@@ -1,0 +1,29 @@
+.calendarIcon,
+.dropdownIcon {
+    display: list-item;
+    width: 20px;
+    height: 20px;
+    margin: 0px 2px;
+}
+
+.dropdownIcon {
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.iconAnchor {
+    float: right;
+}
+
+a {
+    color: #FFC107 !important;
+}
+
+a:hover {
+    color: #FFA000 !important;
+}
+
+html,
+body {
+    font-family: 'Roboto', sans-serif !important;
+}

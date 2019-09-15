@@ -1,9 +1,5 @@
-//TODO: hierarchical checking with: http://jsfiddle.net/5N6TL/44/
-
 let classes = [];
 
-// https://www.epochconverter.com/weeks/2019
-// https://www.ed.ac.uk/semester-dates
 let week_0_per_year = {
     2019: 38,
     2020: 38,
@@ -21,33 +17,58 @@ let week_0 = week_0_per_year[getSchoolYear()]; // get the current year's index o
 let sem1_week1, week_to_52 = (wn) => wn <= 52 ? wn : wn % 52;;
 
 function fetchUrl() {
-    let url = document.getElementById("url").value + "&format=json";
-    get(url)
-        .catch(res => alert(`Failed to fecth given URL (${res.status}) Please check Adblock, PrivacyBadger or similar apps are not blocking requests from this website!`))
+    let url = document.getElementById("url").value;
+    get(url + "&format=json")
+        .catch(res => {
+            let message = "Please check Adblock, PrivacyBadger or similar apps are not blocking requests from this website!"
+            if (res.status === 404) {
+                message = `"${url}" was not found`;
+            }
+            alert(`Failed to fecth given URL (${res.status}): ${message}`)
+        })
         .then(res => {
             res = cleanUpResponse(res); // clean text response
-            classes = res = JSON.parse(res); // parse to JS object abd  assign to globally accessible variable
-            // get the week number of "Sem1 week1" for later calculations
-            sem1_week1 = parseInt(classes[0].weekLabels.find(w => w.week_label == "Sem1 wk1").week_no);
-            res = groupByCourse(res); // group by course
-            displayRes(res); // visualize results
+            try {
+                classes = res = JSON.parse(res); // parse to JS object abd  assign to globally accessible variable
+                // get the week number of "Sem1 week1" for later calculations
+                sem1_week1 = parseInt(classes[0].weekLabels.find(w => w.week_label == "Sem1 wk1").week_no);
+                res = groupByCourse(res); // group by course
+                displayRes(res); // visualize results
+            } catch (e) {
+                return alert(`The url given does not lead to a valid JSON response. \n\n\n${e}`);
+            }
         })
-}
 
-function cleanUpResponse(res) {
-    return res.split("\\/").join("");
-}
+    function cleanUpResponse(res) {
+        return res.split("\\/").join("");
+    }
 
-function groupByCourse(res) {
-    return groupBy(res, entry => entry.course_number);
-    // return groupBy(res, entry => entry.course[0].full_code);
-}
+    function groupByCourse(res) {
+        return groupBy(res, entry => entry.course_number);
+        // return groupBy(res, entry => entry.course[0].full_code);
+    }
 
-function groupBy(arr, groupByRule) {
-    return arr.reduce(function(rv, x) {
-        (rv[groupByRule(x)] = rv[groupByRule(x)] || []).push(x);
-        return rv;
-    }, []);
+    function groupBy(arr, groupByRule) {
+        return arr.reduce(function(rv, x) {
+            (rv[groupByRule(x)] = rv[groupByRule(x)] || []).push(x);
+            return rv;
+        }, []);
+    }
+
+    function get(url) {
+        // https://stackoverflow.com/a/4033310/6196010
+        return new Promise((resolve, reject) => {
+            let xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function() {
+                if (xmlHttp.readyState == 4) {
+                    if (xmlHttp.status == 200) resolve(xmlHttp.responseText)
+                    else reject(xmlHttp)
+                }
+            }
+            xmlHttp.open("GET", url, true); // true for asynchronous 
+            xmlHttp.send(null);
+        });
+    }
 }
 
 function displayRes(res) {
@@ -90,15 +111,16 @@ function displayRes(res) {
         if (class2.type == "Lecture") return 1 //2 comes before
         return class1.name < class2.name ? -1 : 1;
     }
+
+    function addCheckBoxListeners() {
+        $("input[type=checkbox].super").off();
+        $("input[type=checkbox].super").on("change", (e) => {
+            cbx = $(e.target);
+            cbx.closest("div.form-check").next("ul").find(":checkbox").prop("checked", cbx.prop("checked"));
+        });
+    }
 }
 
-function addCheckBoxListeners() {
-    $("input[type=checkbox].super").off();
-    $("input[type=checkbox].super").on("change", (e) => {
-        cbx = $(e.target);
-        cbx.closest("div.form-check").next("ul").find(":checkbox").prop("checked", cbx.prop("checked"));
-    });
-}
 
 function generateIcal() {
     // get the ids of the checked check-boxes
@@ -172,21 +194,6 @@ function getEventsFromClass(_class) {
 }
 
 
-function get(url) {
-    // https://stackoverflow.com/a/4033310/6196010
-    return new Promise((resolve, reject) => {
-        let xmlHttp = new XMLHttpRequest();
-        xmlHttp.onreadystatechange = function() {
-            if (xmlHttp.readyState == 4) {
-                if (xmlHttp.status == 200) resolve(xmlHttp.responseText)
-                else reject(xmlHttp)
-            }
-        }
-        xmlHttp.open("GET", url, true); // true for asynchronous 
-        xmlHttp.send(null);
-    });
-}
-
 function getDateOfISOWeek(w, y) {
     //https://stackoverflow.com/a/16591175/6196010
     let simple = new Date(y, 0, 1 + (w - 1) * 7);
@@ -237,8 +244,6 @@ function getHoursMinutesFromTimeIndex(val) {
         39: "20:00",
     } [val]
 }
-
-// TODO: se falhar o GET avisar quanto a Privacy Badger e AdBlock
 
 $(function() {
     $('[data-toggle="tooltip"]').tooltip()
